@@ -14,4 +14,5 @@
 
 ## Resources 
 **Django Video Tutorial**:
+
 [![django video tutorial](https://img.youtube.com/vi/rHux0gMZ3Eg/0.jpg)](https://www.youtube.com/watch?v=rHux0gMZ3Eg)
