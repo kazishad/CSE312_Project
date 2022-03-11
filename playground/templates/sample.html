@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<h1>Hello {{name}}</h1>
+
+<h2>The Time Now is:</h2>
+<p id="time"></p>
+<script>
+    const date = new Date();
+    let time = date.getTime();
+    document.getElementById("time").innerHTML = time;
+</script>
