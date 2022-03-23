@@ -7,7 +7,7 @@ When a new account is created the `create()` function returns a string stating t
 The usernames and passwords are case-sensitive.
 
 ## Testing Guide
-The `auth_test.py` file contains the sample test. Feel free to add to it to try and break things :)
+The `auth_test.py` file contains the sample test. Feel free to add to it to try and break things :) <br>
 Create an issue if there are any problems or if the service isn't working as intended.
 
 To test the authentication service:
