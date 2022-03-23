@@ -13,6 +13,6 @@
 |Wren Martinson | `wrenmart` | `wrenmart@buffalo.edu` |
 
 ## Resources 
-[Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/)
-[Flask Tutorial](https://flask.palletsprojects.com/en/2.0.x/tutorial/)
-[Tutorial Point: Flask](https://www.tutorialspoint.com/flask/flask_overview.htm)
+[Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/) <br>
+[Flask Tutorial](https://flask.palletsprojects.com/en/2.0.x/tutorial/) <br>
+[Tutorial Point: Flask](https://www.tutorialspoint.com/flask/flask_overview.htm) <br>
