@@ -13,6 +13,6 @@
 |Wren Martinson | `wrenmart` | `wrenmart@buffalo.edu` |
 
 ## Resources 
-**Django Video Tutorial**:
-
-[![django video tutorial](https://img.youtube.com/vi/rHux0gMZ3Eg/0.jpg)](https://www.youtube.com/watch?v=rHux0gMZ3Eg)
+[Flask Documentation](https://flask.palletsprojects.com/en/2.0.x/)
+[Flask Tutorial](https://flask.palletsprojects.com/en/2.0.x/tutorial/)
+[Tutorial Point: Flask](https://www.tutorialspoint.com/flask/flask_overview.htm)
