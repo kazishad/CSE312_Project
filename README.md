@@ -1,8 +1,8 @@
 # Account creation and Authentication
 
-The authentication system has two functions, the first is creating an account, and the second is verifying the user's identity. It creates the account by taking in the username and password on its `create()` function, hashing the password, and saving it on the database. The fucntion returns the username and some string to verify that the account was created. Salting for the password will be implemented later. It verifies the account by taking in the username and password on its `verify()` function, getting the username and hashed password from the database, hasing the given password and comparing them.
+The authentication system has two functions, the first is creating an account, and the second is verifying the user's identity. It creates the account by taking in the username and password on its `create()` function, hashing the password, and saving it on the database. The function returns the username and some string to verify that the account was created. Salting for the password will be implemented later. It verifies the account by taking in the username and password on its `verify()` function, getting the username and hashed password from the database, hasing the given password and comparing them.
 
-When a new account is created the `create()` function returns a string stating that the account has been created. The `verify()` function returns `True` is the username and password matches the with existing account on the database and `False` otherwise.
+When a new account is created the `create()` function returns a string stating that the account has been created. The `verify()` function returns `True` if the username and password matches the with existing account on the database and `False` otherwise.
 
 The usernames and passwords are case-sensitive.
 
