@@ -37,7 +37,9 @@ def create_and_verify(data: list):
 # creating multiple accounts
 account_info = [{"username":"David", "password":"123"}, 
                 {"username":"Alex", "password":"password"}, 
-                {"username":"Maria", "password":"qwerty"}]
+                {"username":"Maria", "password":"qwerty"},
+                {"username":"Anna", "password": "12345678"},
+                {"username":"Maro", "password": "1q2w3e"}]
 
 create_and_verify(account_info)
         

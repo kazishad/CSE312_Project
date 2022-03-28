@@ -14,4 +14,4 @@ To test the authentication service:
 1. Clone the branch using `git clone -b authentication https://github.com/kazishad/CSE312_Project.git`
 2. Run the docker file using `docker-compose up --build`
 3. The terminal should print which accounts were created
-4. It should also print if the accounts were verified or not
+4. It should also print whether the accounts were verified or not
