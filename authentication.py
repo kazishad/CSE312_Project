@@ -5,11 +5,13 @@ mc = MongoClient("mongo")
 db = mc["cse312"]
 cred_collection = db["credentials"]
 
-def create(username: str, password: str) -> str:
-    # implement salt here
+def create(username: str, password: str) -> bool:
+    
+    # creating an account
     hashed_pass = hashlib.sha512(password.encode()).hexdigest()
     cred_collection.insert_one({"username": username, "password":hashed_pass})
-    return "account created for " + username
+    return True
+
 
 def verify(username: str, password: str) -> bool:
     # search db to find hash
@@ -18,11 +20,11 @@ def verify(username: str, password: str) -> bool:
         hashed_pass = db_return["password"]
         current_hash = hashlib.sha512(password.encode()).hexdigest()
         if (hashed_pass == current_hash):
-            print("identity verified for", username)
+            # print("identity verified for", username)
             return True
         else:
-            print("wrong password or email for ", username)
+            # print("wrong password or email for ", username)
             return False
     else:
-        print("username does not exist")
+        # print("username does not exist")
         return False
