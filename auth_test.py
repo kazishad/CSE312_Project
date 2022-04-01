@@ -11,7 +11,7 @@ import authentication
 # authentication.verify("Maria", "qwerty")
 
 
-# Input is a dictionary in {"username":<username>,"password":<password>} format
+# Input is a dictionary in [{"username":<username>,"password":<password>}] format
 def create_multi_account(data:list):
     for info in data:
         if authentication.create(info["username"], info["password"]):
@@ -20,7 +20,7 @@ def create_multi_account(data:list):
             print("error in creating account for", info["username"])
     
 
-# Input is a dictionary in {"username":<username>,"password":<password>} format
+# Input is a dictionary in [{"username":<username>,"password":<password>}] format
 def verify_multi_account(data: list):
     for info in data:
         if authentication.verify(info["username"], info["password"]):
