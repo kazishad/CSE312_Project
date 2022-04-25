@@ -16,9 +16,15 @@ def name(name):
     return f"hello {name}"
 
 
-@app.route("/login")
+@app.route("/login", methods=["POST", "GET"])
 def login():
-    return "login"
+    if request.method == "POST":
+        form = request.form 
+        print(form)
+    else:
+        return render_template("Login.html")
+
+    return redirect(url_for("root"))
 
 
 @app.route("/register", methods=["POST", "GET"])
