@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 
 
+
 import db
 
 app = Flask(__name__)
@@ -27,8 +28,9 @@ def register():
     #     html_string = f.read()
     if request.method == "POST":
         form = request.form 
+        print(form)
         # auth here
-        db.Insert(form)
+        # db.Insert(form)
         return redirect(url_for("name", name=form["usernameField"]))
     else:
         return render_template("Register.html")
