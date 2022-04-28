@@ -2,7 +2,7 @@ import re
 from tabnanny import check
 from flask import Flask, render_template, request, redirect, url_for
 import os
-
+from save_picture import get_id, save_location
 
 import db
 
@@ -50,19 +50,16 @@ def upload():
     if (request.method == "GET"):
         return render_template("upload_image.html")
     elif (request.method == "POST"):
-
         file = request.files['file']
-        filename = file.filename
-
-        if check_allowed(filename):
-
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return "Your File Has Been Saved!"
-        else:
-            return "Unsupported File Extension"
+        filename = "picture" + get_id()
+        save_location(filename)
+        print("this is the filename", filename,flush=True)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return "Your File Has Been Saved!"
 
 if __name__ == '__main__':
   
     # run() method of Flask class runs the application 
     # on the local development server.
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
