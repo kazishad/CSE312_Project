@@ -51,7 +51,9 @@ def upload():
         return render_template("upload_image.html")
     elif (request.method == "POST"):
         file = request.files['file']
-        filename = "picture" + get_id()
+        extension_type = file.filename
+        extension_type = extension_type.split(".")[1]
+        filename = "picture" + get_id() + "." + str(extension_type)
         save_location(filename)
         print("this is the filename", filename,flush=True)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
