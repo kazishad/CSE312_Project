@@ -36,14 +36,10 @@ def register():
         return render_template("Register.html")
 
 def check_allowed(input: str) -> bool:
-
     extensions = {'jpg', 'png', 'jpeg'}
+    print(f"check_allowed input {input}", flush=True)
     file_type = input.split('.')[1].lower()
-
-    if file_type in extensions:
-        return True
-    else:
-        return False
+    return file_type in extensions
 
 @app.route("/upload", methods=["POST","GET"])
 def upload():
@@ -51,8 +47,11 @@ def upload():
         return render_template("upload_image.html")
     elif (request.method == "POST"):
         file = request.files['file']
-        extension_type = file.filename
-        extension_type = extension_type.split(".")[1]
+        input_name = file.filename
+        print(f"input_name:{input_name}",flush=True)
+        extension_type = input_name.split(".")[1]
+        if not check_allowed(input_name):
+            return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
         filename = "picture" + get_id() + "." + str(extension_type)
         save_location(filename)
         print("this is the filename", filename,flush=True)
