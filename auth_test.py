@@ -42,4 +42,10 @@ account_info = [{"username":"David", "password":"123"},
                 {"username":"Maro", "password": "1q2w3e"}]
 
 create_and_verify(account_info)
+
+
+fake_accounts = [{"username":"fake","password":"account"},
+                 {"username":"fake2","password":"account2"},
+                 {"username":"Kevin", "password":"Hello"}]
+verify_multi_account(fake_accounts)
         
