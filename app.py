@@ -65,7 +65,8 @@ def upload():
         filename = "picture" + get_id() + "." + str(extension_type)
         save_location(filename)
         print("this is the filename", filename,flush=True)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(s)
         return "Your File Has Been Saved!"
 
 if __name__ == '__main__':
