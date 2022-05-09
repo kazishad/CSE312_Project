@@ -1,9 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 
-
-
-
-
 import db
 
 app = Flask(__name__)
@@ -15,9 +11,15 @@ def root():
         print(form)
     else:
         return render_template("index.html")
+
     return render_template("index.html")
 
-
+@app.route("/onlineOffline", methods=['POST'])
+def onlineOffline():
+    # print("hi")
+    form2 = request.json
+    print(form2)
+    return f'none'
 
 
 @app.route("/<name>")

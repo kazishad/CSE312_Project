@@ -5,7 +5,7 @@
     <title>index</title>
 
 </head>
-<body onload="useronline()">
+<body >
 
 
 <h1>Hi</h1>
@@ -15,29 +15,18 @@
 
 <script>
 
-    function useronline() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://127.0.0.1:5000", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        const obj = {'stat':'online'} ;
-        xhr.send(JSON.stringify(obj));
 
-        console.log("hi");
-        e.preventDefault();
-        e.returnValue = '';
+    window.onload = function() {
+        const obj = {stat: 'online'};
+        const blob = new Blob([JSON.stringify(obj, null, 2)], {type : 'application/json'});
+        navigator.sendBeacon('/onlineOffline',  blob);
     };
 
-    window.addEventListener('beforeunload', function (e) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://127.0.0.1:5000", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        const obj = {'stat':'offline'} ;
-        xhr.send(JSON.stringify(obj));
+    window.addEventListener('beforeunload', function logData() {
+        const obj = {stat: 'offline'};
+        const blob = new Blob([JSON.stringify(obj, null, 2)], {type : 'application/json'});
+        navigator.sendBeacon('/onlineOffline',  blob);
 
-        console.log("hi");
-        e.preventDefault();
-        e.returnValue = '';
     });
-
 </script>
 </html>
