@@ -10,7 +10,7 @@ def create(username: str, password: str) -> bool:
     salt = bcrypt.gensalt()
     hashed_pass = bcrypt.hashpw(b_pass,salt)
 
-    cred_collection.insert_one({"username": username, "password":hashed_pass, "pic_path":"None"})
+    cred_collection.insert_one({"username": username, "password":hashed_pass, "pic_path":"None", "status":"online"})
     return True
 
 # returns true if the account exists and has been verified, false if the password or username is wrong,
@@ -25,11 +25,20 @@ def verify(username: str, password: str) -> bool:
         return False
 
 # returns true of the pic path was changed, false if the account could not be found
-def change_prof_pic(username:str, old_path: str, new_path: str) -> bool:
+def change_prof_pic(username: str, new_path: str) -> bool:
     db_return = cred_collection.find({"username":username})
     if db_return:
-        cred_collection.update_one({"pic_path":old_path}, {"$set":{"pic_path":new_path}})
+        cred_collection.update_one({"username":username}, {"$set":{"pic_path":new_path}})
         return True
     else:
         return False
 
+# updates status to input value, return false if status could not be updated 
+# or the accoutn could not be found
+def update_status(username: str, status: str) -> bool:
+    db_return = cred_collection.find_one({"username":username})
+    if db_return:
+        cred_collection.update_one({"username":username}, {"$set":{"status":status}})
+        return True
+    else:
+        return False
