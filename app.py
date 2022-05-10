@@ -8,7 +8,7 @@ from save_picture import get_id, save_location
 
 
 import db
-from xsrf_tokens import generate_xsrf_token
+from xsrf_tokens import generate_xsrf_token, validate_xsrf_token
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
@@ -56,21 +56,25 @@ def check_allowed(input: str) -> bool:
 def upload():
     if (request.method == "GET"):
         xsrf_token = generate_xsrf_token()
-        return render_template("upload_image.html", xsrf_token=xsrf_token)
+        return render_template("upload_image.html", xsrf_token=xsrf_token) # TODO: change over to our custom render template function
     elif (request.method == "POST"):
-        # TODO: Obtain the token from the request data
-        file = request.files['file']
-        input_name = file.filename
-        print(f"input_name:{input_name}",flush=True)
-        extension_type = input_name.split(".")[1]
-        if not check_allowed(input_name):
-            return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
-        filename = "picture" + get_id() + "." + str(extension_type)
-        save_location(filename)
-        print("this is the filename", filename,flush=True)
-        s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(s)
-        return "Your File Has Been Saved!"
+        xsrf_token = request.headers.get('xsrf token') # Obtain xsrf token
+        valid_xsrf_token = validate_xsrf_token(xsrf_token) # Check xsrf token against those stored in db
+        if valid_xsrf_token:
+            file = request.files['file']
+            input_name = file.filename
+            print(f"input_name:{input_name}",flush=True)
+            extension_type = input_name.split(".")[1]
+            if not check_allowed(input_name):
+                return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
+            filename = "picture" + get_id() + "." + str(extension_type)
+            save_location(filename)
+            print("this is the filename", filename,flush=True)
+            s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(s)
+            return "Your File Has Been Saved!"
+        else:
+            return "Invalid XSRF Token :("
 
 if __name__ == '__main__':
   
