@@ -72,6 +72,13 @@ def user_list() -> list:
             retList.append(data["username"])
     return retList
 
+def check_user(username) -> bool:
+    db_return = cred_collection.find({"username": username})
+    retList = []
+    if db_return:
+        return True
+    else:
+        return False
 
 # returns list of users that has True for status on the database
 # returns an empty list if there aren't any others

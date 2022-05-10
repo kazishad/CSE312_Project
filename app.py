@@ -1,9 +1,8 @@
 import re
-from tabnanny import check
 from flask import Flask, request, redirect, url_for
 import os
 from save_picture import get_id, save_location
-
+from authentication import online_now, user_list, check_user
 
 
 
@@ -17,7 +16,8 @@ def root():
     return "<h1>root</h1>"
 @app.route("/<name>")
 def name(name):
-    # check 
+
+    if 
     return f"hello {name}"
 
 
