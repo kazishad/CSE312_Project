@@ -16,8 +16,6 @@ def root():
     return "<h1>root</h1>"
 @app.route("/<name>")
 def name(name):
-
-    if 
     return f"hello {name}"
 
 
