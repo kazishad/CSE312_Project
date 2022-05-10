@@ -18,21 +18,20 @@ def root():
     
 @app.route("/<name>")
 def name(name):
-    # returnhtml = ""
-    # if check_user(name):
-    #     with open("templates/Login.html") as f:
-    #         returnhtml = f.read()
-    #     returnhtml.replace("{{user}}", name)
+    returnhtml = ""
+    if check_user(name):
+        with open("templates/index.html") as f:
+            returnhtml = f.read()
+        returnhtml = returnhtml.replace("{{user}}", name)
+        return returnhtml
 
-    return ("hello " + name)
+    
 
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         form = request.form 
-        
-
 
         if verify(form["usernameField"], form["passwordField"]):
             return redirect(url_for("name", name=form["usernameField"])) 
@@ -84,7 +83,7 @@ def upload():
         print("this is the filename", filename,flush=True)
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)
-        return "Your File Has Been Saved!"
+        return redirect(url_for("login"))
 
 if __name__ == '__main__':
   
