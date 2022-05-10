@@ -11,12 +11,20 @@ import db
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def root():
     return "<h1>root</h1>"
+
+    
 @app.route("/<name>")
 def name(name):
-    return f"hello {name}"
+    returnhtml = ""
+    if check_user(name):
+        with open("templates/Login.html") as f:
+            returnhtml = f.read()
+        returnhtml.replace("{{user}}", name)
+
+    return returnhtml
 
 
 @app.route("/login", methods=["POST", "GET"])
