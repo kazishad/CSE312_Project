@@ -2,7 +2,7 @@ import re
 from flask import Flask, request, redirect, url_for
 import os
 from save_picture import get_id, save_location
-from authentication import online_now, user_list, check_user
+from authentication import *
 
 
 
@@ -18,26 +18,32 @@ def root():
     
 @app.route("/<name>")
 def name(name):
-    returnhtml = ""
-    if check_user(name):
-        with open("templates/Login.html") as f:
-            returnhtml = f.read()
-        returnhtml.replace("{{user}}", name)
+    # returnhtml = ""
+    # if check_user(name):
+    #     with open("templates/Login.html") as f:
+    #         returnhtml = f.read()
+    #     returnhtml.replace("{{user}}", name)
 
-    return returnhtml
+    return ("hello " + name)
 
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         form = request.form 
-        print(form)
+        
+
+
+        if verify(form["usernameField"], form["passwordField"]):
+            return redirect(url_for("name", name=form["usernameField"])) 
+        else:
+            return "wrong credentials"
     else:
         with open("templates/Login.html") as f:
             return f.read()
         
 
-    return redirect(url_for("root"))
+    
 
 
 @app.route("/register", methods=["POST", "GET"])
@@ -46,11 +52,11 @@ def register():
     # with open('static/Register.html', 'r') as f:
     #     html_string = f.read()
     if request.method == "POST":
-        form = request.form 
-        print(form)
-        # auth here
-        # db.Insert(form)
-        return redirect(url_for("name", name=form["usernameField"]))
+        form = request.form
+        print(form, flush=True)
+        print("DICT", form.to_dict, type( form.to_dict),flush=True)
+        create(form["usernameField"], form["passwordField"])
+        return redirect(url_for("login"))
     else:
         with open("templates/Register.html") as f:
             return f.read()
