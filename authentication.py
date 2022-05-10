@@ -93,7 +93,13 @@ def username_from_auth_token(token: str) -> (bool, str):
     else:
         return (False, None)
 
-# TODO: return list of users with accounts [x]
-#       return list of online users [x]
-#       return name based on auth_token
-#       change token using username
+# returns true if the token has been updated
+# returns false if the account could not be found
+def change_token(username: str, new_token: str) -> bool:
+    db_return = cred_collection.find_one({"username":username})
+    if db_return:
+        cred_collection.update_one({"username":username}, {"$set":{"auth_token":new_token}})
+        return True
+    else:
+        return False
+
