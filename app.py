@@ -1,49 +1,49 @@
 import re
+import sys
 from tabnanny import check
+import pymongo
 from flask import Flask, render_template, request, redirect, url_for
 import os
 from save_picture import get_id, save_location
-
-
-
-
 import db
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
+myclient = pymongo.MongoClient("mongo")
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def root():
-    return "root"
-@app.route("/<name>")
-def name(name):
-    return f"hello {name}"
+    sys.stdout.flush()
+    return render_template("index.html")
 
-
-@app.route("/login", methods=["POST", "GET"])
+@app.route("/login", methods=["POST"])
 def login():
     if request.method == "POST":
-        form = request.form 
-        print(form)
-    else:
-        return render_template("Login.html")
+        form = request.form
+        db.login_check(username= form["usernameField"], password= form["passwordField"])
+        sys.stdout.flush()
+        return redirect(url_for(".name", name=form["usernameField"]))
 
-    return redirect(url_for("root"))
-
-
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/register", methods=["POST"])
 def register():
-
-    # with open('static/Register.html', 'r') as f:
-    #     html_string = f.read()
     if request.method == "POST":
-        form = request.form 
-        print(form)
-        # auth here
-        # db.Insert(form)
-        return redirect(url_for("name", name=form["usernameField"]))
-    else:
-        return render_template("Register.html")
+        form = request.form
+        db.create_new_user(username= form["usernameField"], password= form["passwordField"])
+        sys.stdout.flush()
+        return redirect(url_for(".name", name=form["usernameField"]))
+
+@app.route("/onlineOffline", methods=['POST'])
+def onlineOffline():
+    form2 = request.json
+    print(form2)
+    sys.stdout.flush()
+    return f"hi"
+
+@app.route("/userHomPage/<name>")
+def name(name):
+    print(name)
+    sys.stdout.flush()
+    return render_template("userHomePage.html", userdata = name)
 
 def check_allowed(input: str) -> bool:
     extensions = {'jpg', 'png', 'jpeg'}
