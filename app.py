@@ -1,6 +1,6 @@
 import re
 from tabnanny import check
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, make_response, render_template, request, redirect, url_for
 import os
 from save_picture import get_id, save_location
 
@@ -8,6 +8,7 @@ from save_picture import get_id, save_location
 
 
 import db
+from xsrf_tokens import generate_xsrf_token
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
@@ -54,8 +55,10 @@ def check_allowed(input: str) -> bool:
 @app.route("/upload", methods=["POST","GET"])
 def upload():
     if (request.method == "GET"):
-        return render_template("upload_image.html")
+        xsrf_token = generate_xsrf_token()
+        return render_template("upload_image.html", xsrf_token=xsrf_token)
     elif (request.method == "POST"):
+        # TODO: Obtain the token from the request data
         file = request.files['file']
         input_name = file.filename
         print(f"input_name:{input_name}",flush=True)
