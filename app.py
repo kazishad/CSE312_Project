@@ -30,6 +30,12 @@ def name(name):
                     with open("templates/profile.html") as f:
                         returnhtml = f.read()
                     returnhtml = returnhtml.replace("{{user}}", name)
+
+                    # get picture
+                    filename = get_path(name)
+                    if filename != None:
+                        s = 'src="' + filename + '"' + ' alt=""'
+                        returnhtml = returnhtml.replace("{{filename}}", name)
                     return returnhtml
                 # else: #someone else's profile
             else:
@@ -85,8 +91,8 @@ def check_allowed(input: str) -> bool:
     file_type = input.split('.')[1].lower()
     return file_type in extensions
 
-@app.route("/upload", methods=["POST","GET"])
-def upload():
+@app.route("/upload/<name>", methods=["POST","GET"])
+def upload(name):
     if (request.method == "GET"):
         with open("templates/upload_image.html") as f:
             return f.read()
@@ -98,11 +104,13 @@ def upload():
         if not check_allowed(input_name):
             return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
         filename = "picture" + get_id() + "." + str(extension_type)
-        picture_location(filename)
+        authToken = request.cookies.get('auth')
+        user = username_from_auth_token(authToken)
+        picture_location(user, filename)
         print("this is the filename", filename,flush=True)
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)
-        return redirect(url_for("name", name="a")) 
+        return redirect(url_for("name", name=name)) 
 
 if __name__ == '__main__':
   
