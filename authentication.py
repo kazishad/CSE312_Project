@@ -28,6 +28,7 @@ def verify(username: str, password: str) -> bool:
     db_return = cred_collection.find_one({"username": username})
     if db_return:
         db_hashed_pass = db_return["password"]
+        cred_collection.update_one({"username":username}, {"$set":{"status":True}})
         return bcrypt.checkpw(b_pass, db_hashed_pass)
     else:
         return False
