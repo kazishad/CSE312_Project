@@ -18,6 +18,7 @@ def root():
     
 @app.route("/<name>")
 def name(name):
+    auth_token()
     returnhtml = ""
     if check_user(name):
         with open("templates/index.html") as f:

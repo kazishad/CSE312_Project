@@ -53,7 +53,7 @@ def update_status(username: str, status: bool) -> bool:
 
 # returns a tuple, values would either be (True, <auth_token>) or (False, None), 
 # May return (False, None) if either username and/or password are wrong or if the account does not exist
-def auth_token(username: str, password: str) -> (bool, str):
+def auth_token(username: str, password: str) -> tuple:
     if verify(username, password):
         auth_token = secrets.token_urlsafe(30)
         hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
