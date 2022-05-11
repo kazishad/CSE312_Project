@@ -4,8 +4,8 @@ mc = MongoClient("mongo")
 db = mc["cse312"]
 pic_collection = db["pic_location"]
 
-def get_id() -> int:
-    return pic_collection.count_documents({})
+def get_id() -> str:
+    return str(pic_collection.count_documents({}))
 
 # returns true after adding picture path
 # this function can be used to update the location

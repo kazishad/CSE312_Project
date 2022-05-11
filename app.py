@@ -16,29 +16,32 @@ def root():
     return "<h1>root</h1>"
 
     
-@app.route("/<name>")
-def name(name):
+@app.route("/<profile>")
+def profile(profile):
     returnhtml = ""
 
-    if check_user(name):
+    if check_user(profile):
         if "auth" in request.cookies:
             authToken = request.cookies.get('auth')
             user = username_from_auth_token(authToken)
             if user:
-                if user == name:
+                if user == profile:
 
                     with open("templates/profile.html") as f:
                         returnhtml = f.read()
-                    returnhtml = returnhtml.replace("{{user}}", name)
+                else:
+                    with open("templates/otherProfile.html") as f:
+                        returnhtml = f.read()
+                returnhtml = returnhtml.replace("{{user}}", profile)
 
-                    # get picture
-                    filename = get_path(name)
-                    print()
-                    if filename != None:
-                        s = 'src="' + filename + '"'
-                        returnhtml = returnhtml.replace("{{filename}}", s)
-                    return returnhtml
-                else: return "someone else's profile"
+                # get picture
+                filename = get_path(profile)
+                print()
+                if filename != None:
+                    s = 'src="' + filename + '"'
+                    returnhtml = returnhtml.replace("{{filename}}", s)
+                return returnhtml
+                
             else:
                 return "auth token doesn't match"
         else:
@@ -55,7 +58,7 @@ def login():
         form = request.form 
         auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
         if auth_token_resp[0]:
-            s = url_for("name", name=form["usernameField"])
+            s = url_for("profile", profile=form["usernameField"])
 
             response = make_response(redirect(s))
             response.set_cookie('auth', auth_token_resp[1])
@@ -92,8 +95,8 @@ def check_allowed(input: str) -> bool:
     file_type = input.split('.')[1].lower()
     return file_type in extensions
 
-@app.route("/upload/<name>", methods=["POST","GET"])
-def upload(name):
+@app.route("/upload/<profile>", methods=["POST","GET"])
+def upload(profile):
     if (request.method == "GET"):
         with open("templates/upload_image.html") as f:
             return f.read()
@@ -104,19 +107,19 @@ def upload(name):
         extension_type = input_name.split(".")[1]
         if not check_allowed(input_name):
             return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
-        filename = "picture" + str(get_id()) + "." + str(extension_type)
+        filename = "picture" + get_id() + "." + str(extension_type)
         authToken = request.cookies.get('auth')
         user = username_from_auth_token(authToken)
         picture_location(user, filename)
         print("this is the filename", filename,flush=True)
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)
-        return redirect(url_for("name", name=name)) 
+        return redirect(url_for("profile", profile=profile)) 
     
 @app.route("/images/<image>", methods=["GET"])
 def getImage(image):
 
-    return open("pic.png", "rb").read()
+    return pic_bytes(image)
 
 
 
