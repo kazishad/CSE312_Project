@@ -38,7 +38,7 @@ def name(name):
                         s = 'src="' + filename + '"'
                         returnhtml = returnhtml.replace("{{filename}}", s)
                     return returnhtml
-                # else: #someone else's profile
+                else: return "someone else's profile"
             else:
                 return "auth token doesn't match"
         else:
@@ -104,7 +104,7 @@ def upload(name):
         extension_type = input_name.split(".")[1]
         if not check_allowed(input_name):
             return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
-        filename = "picture" + get_id() + "." + str(extension_type)
+        filename = "picture" + str(get_id()) + "." + str(extension_type)
         authToken = request.cookies.get('auth')
         user = username_from_auth_token(authToken)
         picture_location(user, filename)
@@ -112,6 +112,13 @@ def upload(name):
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)
         return redirect(url_for("name", name=name)) 
+    
+@app.route("/images/<image>", methods=["GET"])
+def getImage(image):
+
+    return open("pic.png", "rb").read()
+
+
 
 if __name__ == '__main__':
   

@@ -4,7 +4,7 @@ mc = MongoClient("mongo")
 db = mc["cse312"]
 pic_collection = db["pic_location"]
 
-def get_id() -> str:
+def get_id() -> int:
     return pic_collection.count_documents({})
 
 # returns true after adding picture path
