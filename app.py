@@ -2,10 +2,11 @@ import re
 from tabnanny import check
 from flask import Flask, request, redirect, url_for
 import os
+from authentication import auth_token
 from save_picture import get_id, save_location
 
-
-
+from logout import *
+from authentication import *
 
 import db
 
@@ -29,10 +30,13 @@ def login():
     else:
         with open("templates/Login.html") as f:
             return f.read()
-        
-
     return redirect(url_for("root"))
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    auth_token = request.headers.get("auth_token") # Obtain auth token
+    success, username = username_from_auth_token(auth_token) # Obtain username by auth token - NOTE: Do we need to use 'success'?
+    logout_user(username)
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
