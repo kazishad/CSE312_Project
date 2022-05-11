@@ -35,8 +35,12 @@ def login():
 @app.route("/logout", methods=["POST"])
 def logout():
     auth_token = request.headers.get("auth_token") # Obtain auth token
-    success, username = username_from_auth_token(auth_token) # Obtain username by auth token - NOTE: Do we need to use 'success'?
-    logout_user(username)
+    success, username = username_from_auth_token(auth_token) # Obtain username by auth token
+    if success:
+        logout_user(username)
+        return "You are now logged out. Hope to see you again soon!"
+    else:
+        return "Unable to Logout: invalid auth_token"
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
