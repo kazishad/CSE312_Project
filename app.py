@@ -83,7 +83,7 @@ def upload():
         print("this is the filename", filename,flush=True)
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)
-        return redirect(url_for("login"))
+        return redirect(url_for("name", name="a")) 
 
 if __name__ == '__main__':
   
