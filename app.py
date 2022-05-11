@@ -60,6 +60,8 @@ def upload():
         with open("templates/upload_image.html") as f:
             return f.read()
     elif (request.method == "POST"):
+        if 'file' not in request.files:
+           return "no file selected" 
         file = request.files['file']
         input_name = file.filename
         print(f"input_name:{input_name}",flush=True)
