@@ -1,5 +1,5 @@
 import re
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, make_response
 import os
 from save_picture import *
 from authentication import *
@@ -18,13 +18,26 @@ def root():
     
 @app.route("/<name>")
 def name(name):
-    auth_token()
     returnhtml = ""
+
     if check_user(name):
-        with open("templates/index.html") as f:
-            returnhtml = f.read()
-        returnhtml = returnhtml.replace("{{user}}", name)
-        return returnhtml
+        if "auth" in request.cookies:
+            authToken = request.cookies.get('auth')
+            user = username_from_auth_token(authToken)
+            if user:
+                if user == name:
+
+                    with open("templates/profile.html") as f:
+                        returnhtml = f.read()
+                    returnhtml = returnhtml.replace("{{user}}", name)
+                    return returnhtml
+                # else: #someone else's profile
+            else:
+                return "auth token doesn't match"
+        else:
+            return "not logged in"
+    else:
+        return "not a valid profile"
 
     
 
@@ -33,9 +46,14 @@ def name(name):
 def login():
     if request.method == "POST":
         form = request.form 
+        auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
+        if auth_token_resp[0]:
+            s = url_for("name", name=form["usernameField"])
 
-        if verify(form["usernameField"], form["passwordField"]):
-            return redirect(url_for("name", name=form["usernameField"])) 
+            response = make_response(redirect(s))
+            response.set_cookie('auth', auth_token_resp[1])
+            return response
+            
         else:
             return "wrong credentials"
     else:

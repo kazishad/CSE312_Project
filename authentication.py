@@ -93,13 +93,13 @@ def online_now() -> list:
 
 # returns the a tuple (True, <username>) if the account was found
 # or (False, None) if there are no accounts with the same auth_token could not be found
-def username_from_auth_token(token: str) -> (bool, str):
+def username_from_auth_token(token: str):
     hashed_token = hashlib.sha256(token.encode()).hexdigest()
     db_return = cred_collection.find_one({"auth_token":hashed_token})
     if db_return:
-        return (True, db_return["username"])
+        return db_return["username"]
     else:
-        return (False, None)
+        return None
 
 # returns true if the token has been updated
 # returns false if the account could not be found
