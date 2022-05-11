@@ -66,7 +66,7 @@ def login():
             return "wrong credentials"
     else:
         xsrf_token = generate_xsrf_token()
-        return custom_render_template("templates/login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
+        return custom_render_template("templates/Login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -81,7 +81,7 @@ def register():
         return redirect(url_for("login"))
     else:
         xsrf_token = generate_xsrf_token()
-        return custom_render_template("templates/register.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
+        return custom_render_template("templates/Register.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
 def check_allowed(input: str) -> bool:
     extensions = {'jpg', 'png', 'jpeg'}
