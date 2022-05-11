@@ -42,7 +42,7 @@ def change_prof_pic(username: str, new_path: str) -> bool:
         return False
 
 # updates status to input value, return false if status could not be updated 
-# or the accoutn could not be found
+# or the account could not be found
 def update_status(username: str, status: bool) -> bool:
     db_return = cred_collection.find_one({"username":username})
     if db_return:
