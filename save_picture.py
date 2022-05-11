@@ -22,3 +22,11 @@ def picture_location(username: str, image_name: str) -> bool:
     else:
         pic_collection.insert_one({"username": username, "path":path})
         return True
+
+# returns the file path, if the account exists, otherwise returns None
+def get_path(username: str) -> str:
+    db_return = pic_collection.find_one({"username":username})
+    if db_return:
+        return db_return["path"]
+    else:
+        return None
