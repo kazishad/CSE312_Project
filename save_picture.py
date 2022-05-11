@@ -26,3 +26,7 @@ def get_path(username: str) -> str:
         return db_return["path"]
     else:
         return None
+
+# takes in a picture name and returns the bytes for that image
+def pic_bytes(name: str) -> bool:
+    return open("images/" + name, "rb").read()
