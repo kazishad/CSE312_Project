@@ -26,3 +26,20 @@ def validate_xsrf_token(xsrf_token) -> bool:
             return True
 
     return False # Return False if we did not find a match
+
+
+def custom_render_template(filename_dir: str, placeholder: str, replace_with: str) -> str:
+    """
+    Replaces one instance (the first) placeholder
+
+    filename_dir: the filename pathed from the root (example: "templates/upload_image.html")
+    placeholder: the thing inside the {{}} that we are replacing
+    replace_with: what we are replacing the placeholder with
+
+    returns: html file as a string, with replacement
+    """
+
+    with open(filename_dir) as f:
+        html = f.read()
+    html = html.replace("{{"+placeholder+"}}", replace_with)
+    return html

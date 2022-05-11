@@ -8,7 +8,7 @@ from save_picture import get_id, save_location
 
 
 import db
-from xsrf_tokens import generate_xsrf_token, validate_xsrf_token
+from xsrf_tokens import custom_render_template, generate_xsrf_token, validate_xsrf_token
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
@@ -57,10 +57,7 @@ def upload():
     if (request.method == "GET"):
         xsrf_token = generate_xsrf_token()
         # HTML templating - adds xsrf token to form
-        with open("templates/upload_image.html") as f:
-            returnhtml = f.read()
-        returnhtml = returnhtml.replace("{{xsrf_token}}", xsrf_token)
-        return returnhtml
+        return custom_render_template("templates/upload_image.html", "xsrf_token", xsrf_token)
     elif (request.method == "POST"):
         xsrf_token = request.headers.get('xsrf token') # Obtain xsrf token
         valid_xsrf_token = validate_xsrf_token(xsrf_token) # Check xsrf token against those stored in db
