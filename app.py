@@ -33,9 +33,10 @@ def name(name):
 
                     # get picture
                     filename = get_path(name)
+                    print()
                     if filename != None:
-                        s = 'src="' + filename + '"' + ' alt=""'
-                        returnhtml = returnhtml.replace("{{filename}}", name)
+                        s = 'src="' + filename + '"'
+                        returnhtml = returnhtml.replace("{{filename}}", s)
                     return returnhtml
                 # else: #someone else's profile
             else:
