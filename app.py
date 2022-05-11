@@ -101,10 +101,10 @@ def upload(profile):
         with open("templates/upload_image.html") as f:
             return f.read()
     elif (request.method == "POST"):
-        if 'file' not in request.files:
-           return "no file selected" 
         file = request.files['file']
         input_name = file.filename
+        if input_name == '':
+            return "no file selected, you dumbass >:("
         print(f"input_name:{input_name}",flush=True)
         extension_type = input_name.split(".")[1]
         if not check_allowed(input_name):
