@@ -56,7 +56,11 @@ def check_allowed(input: str) -> bool:
 def upload():
     if (request.method == "GET"):
         xsrf_token = generate_xsrf_token()
-        return render_template("upload_image.html", xsrf_token=xsrf_token) # TODO: change over to our custom render template function
+        # HTML templating - adds xsrf token to form
+        with open("templates/upload_image.html") as f:
+            returnhtml = f.read()
+        returnhtml = returnhtml.replace("{{xsrf_token}}", xsrf_token)
+        return returnhtml
     elif (request.method == "POST"):
         xsrf_token = request.headers.get('xsrf token') # Obtain xsrf token
         valid_xsrf_token = validate_xsrf_token(xsrf_token) # Check xsrf token against those stored in db
