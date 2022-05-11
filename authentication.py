@@ -105,8 +105,9 @@ def username_from_auth_token(token: str):
 # returns false if the account could not be found
 def change_token(username: str, new_token: str) -> bool:
     db_return = cred_collection.find_one({"username":username})
+    hashed_token = hashlib.sha256(new_token.encode()).hexdigest()
     if db_return:
-        cred_collection.update_one({"username":username}, {"$set":{"auth_token":new_token}})
+        cred_collection.update_one({"username":username}, {"$set":{"auth_token":hashed_token}})
         return True
     else:
         return False
