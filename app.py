@@ -56,9 +56,11 @@ def profile(profile):
 def login():
     if request.method == "POST":
         form = request.form 
-        auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
+        name = sanitize_data(form["usernameField"])
+        password = sanitize_data(form["passwordField"])
+        auth_token_resp = auth_token(name, password)
         if auth_token_resp[0]:
-            s = url_for("profile", profile=form["usernameField"])
+            s = url_for("profile", profile=name)
 
             response = make_response(redirect(s))
             response.set_cookie('auth', auth_token_resp[1])
@@ -72,7 +74,8 @@ def login():
         
 
     
-
+def sanitize_data(data: str) -> str:
+    return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -83,8 +86,13 @@ def register():
         form = request.form
         print(form, flush=True)
         print("DICT", form.to_dict, type( form.to_dict),flush=True)
-        create(form["usernameField"], form["passwordField"])
-        return redirect(url_for("login"))
+        name = sanitize_data(form["usernameField"])
+        password = sanitize_data(form["passwordField"])
+        print(f"username: {name}, password: {password}", flush=True)
+        if create(name, password):
+            return redirect(url_for("login"))
+        else:
+            return "Username exists, choose another one, bitch"
     else:
         with open("templates/Register.html") as f:
             return f.read()
