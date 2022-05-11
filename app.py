@@ -1,7 +1,7 @@
 import re
 from flask import Flask, request, redirect, url_for
 import os
-from save_picture import get_id, save_location
+from save_picture import *
 from authentication import *
 
 
@@ -79,7 +79,7 @@ def upload():
         if not check_allowed(input_name):
             return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
         filename = "picture" + get_id() + "." + str(extension_type)
-        save_location(filename)
+        picture_location(filename)
         print("this is the filename", filename,flush=True)
         s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(s)

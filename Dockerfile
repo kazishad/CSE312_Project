@@ -11,4 +11,4 @@ RUN chmod +x /wait
 
 EXPOSE 5000
 
-CMD /wait && python app.py 
+CMD /wait && python app.py

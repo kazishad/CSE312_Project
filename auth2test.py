@@ -1,4 +1,4 @@
-from authentication import create, verify, auth_token, user_list, online_now, update_status, username_from_auth_token
+from authentication import create, verify, auth_token, user_list, online_now, update_status, username_from_auth_token, change_token
 
 
 print(create("user1","password1"), flush=True)
@@ -32,3 +32,8 @@ temp, user3_auth = auth_token("user3","password3")
 
 username = username_from_auth_token(user3_auth)
 print(f"auth username{username}", flush=True)
+
+
+print(change_token("user1","987yughbjhiijlk"), flush=True)
+
+print(change_token("user5","0987uyghjbn"), flush=True)
