@@ -5,11 +5,7 @@ db = mc["cse312"]
 pic_collection = db["pic_location"]
 
 def get_id() -> str:
-    retData = pic_collection.find_one({"path":{"$exists":True}})
-    if retData:
-        return str(len(retData["path"]))
-    else:
-        return "0"
+    return str(pic_collection.count_documents({}))
 
 # returns true after adding picture path
 # this function can be used to update the location
@@ -30,3 +26,7 @@ def get_path(username: str) -> str:
         return db_return["path"]
     else:
         return None
+
+# takes in a picture name and returns the bytes for that image
+def pic_bytes(name: str) -> bool:
+    return open("images/" + name, "rb").read()

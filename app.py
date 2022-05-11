@@ -18,28 +18,32 @@ def root():
     return "<h1>root</h1>"
 
     
-@app.route("/<name>")
-def name(name):
+@app.route("/<profile>")
+def profile(profile):
     returnhtml = ""
 
-    if check_user(name):
+    if check_user(profile):
         if "auth" in request.cookies:
             authToken = request.cookies.get('auth')
             user = username_from_auth_token(authToken)
             if user:
-                if user == name:
+                if user == profile:
 
                     with open("templates/profile.html") as f:
                         returnhtml = f.read()
-                    returnhtml = returnhtml.replace("{{user}}", name)
+                else:
+                    with open("templates/otherProfile.html") as f:
+                        returnhtml = f.read()
+                returnhtml = returnhtml.replace("{{user}}", profile)
 
-                    # get picture
-                    filename = get_path(name)
-                    if filename != None:
-                        s = 'src="' + filename + '"' + ' alt=""'
-                        returnhtml = returnhtml.replace("{{filename}}", name)
-                    return returnhtml
-                # else: #someone else's profile
+                # get picture
+                filename = get_path(profile)
+                print()
+                if filename != None:
+                    s = 'src="' + filename + '"'
+                    returnhtml = returnhtml.replace("{{filename}}", s)
+                return returnhtml
+                
             else:
                 return "auth token doesn't match"
         else:
@@ -56,7 +60,7 @@ def login():
         form = request.form 
         auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
         if auth_token_resp[0]:
-            s = url_for("name", name=form["usernameField"])
+            s = url_for("profile", profile=form["usernameField"])
 
             response = make_response(redirect(s))
             response.set_cookie('auth', auth_token_resp[1])
@@ -89,8 +93,8 @@ def check_allowed(input: str) -> bool:
     file_type = input.split('.')[1].lower()
     return file_type in extensions
 
-@app.route("/upload/<name>", methods=["POST","GET"])
-def upload(name):
+@app.route("/upload/<profile>", methods=["POST","GET"])
+def upload(profile):
     if (request.method == "GET"):
         xsrf_token = generate_xsrf_token()
         # HTML templating - adds xsrf token to form
@@ -101,6 +105,8 @@ def upload(name):
         if valid_xsrf_token:
             file = request.files['file']
             input_name = file.filename
+            if input_name == '':
+                return "no file selected, you dumbass >:("
             print(f"input_name:{input_name}",flush=True)
             extension_type = input_name.split(".")[1]
             if not check_allowed(input_name):
@@ -112,9 +118,15 @@ def upload(name):
             print("this is the filename", filename,flush=True)
             s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(s)
-            return redirect(url_for("name", name=name)) 
+            return redirect(url_for("profile", profile=profile)) 
         else:
             return "Invalid XSRF Token :("
+
+    
+@app.route("/images/<image>", methods=["GET"])
+def getImage(image):
+
+    return pic_bytes(image)
 
 if __name__ == '__main__':
   
