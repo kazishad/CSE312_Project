@@ -2,7 +2,7 @@ import re
 from tabnanny import check
 from flask import Flask, make_response, render_template, request, redirect, url_for
 import os
-from save_picture import save_location, get_id
+from save_picture import *
 
 
 
