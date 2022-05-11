@@ -21,7 +21,5 @@ The `auth_test.py` file contains the sample test. Feel free to add to it to try 
 Create an issue if there are any problems or if the service isn't working as intended.
 
 To test the authentication service:
-1. Clone the branch using `git clone -b authentication https://github.com/kazishad/CSE312_Project.git`
+1. Clone the branch using `git clone -b dev https://github.com/kazishad/CSE312_Project.git`
 2. Run the docker file using `docker-compose up --build`
-3. The terminal should print which accounts were created
-4. It should also print whether the accounts were verified or not

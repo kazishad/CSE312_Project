@@ -2,8 +2,7 @@ import re
 from tabnanny import check
 from flask import Flask, make_response, render_template, request, redirect, url_for
 import os
-from save_picture import get_id, save_location
-
+from save_picture import save_location, get_id
 
 
 
@@ -15,9 +14,10 @@ app.config['UPLOAD_FOLDER'] = './images'
 
 @app.route("/")
 def root():
-    return "root"
+    return "<h1>root</h1>"
 @app.route("/<name>")
 def name(name):
+    # check 
     return f"hello {name}"
 
 
@@ -27,7 +27,9 @@ def login():
         form = request.form 
         print(form)
     else:
-        return render_template("Login.html")
+        with open("templates/Login.html") as f:
+            return f.read()
+        
 
     return redirect(url_for("root"))
 
@@ -44,7 +46,8 @@ def register():
         # db.Insert(form)
         return redirect(url_for("name", name=form["usernameField"]))
     else:
-        return render_template("Register.html")
+        with open("templates/Register.html") as f:
+            return f.read()
 
 def check_allowed(input: str) -> bool:
     extensions = {'jpg', 'png', 'jpeg'}
