@@ -26,11 +26,9 @@ def login():
     if request.method == "POST":
         form = request.form 
         print(form)
-    else:
-        with open("templates/Login.html") as f:
-            return f.read()
-        
-
+    else: # if GET request
+        xsrf_token = generate_xsrf_token()
+        return custom_render_template("templates/login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
     return redirect(url_for("root"))
 
 
@@ -45,9 +43,9 @@ def register():
         # auth here
         # db.Insert(form)
         return redirect(url_for("name", name=form["usernameField"]))
-    else:
-        with open("templates/Register.html") as f:
-            return f.read()
+    else: # if GET request
+        xsrf_token = generate_xsrf_token()
+        return custom_render_template("templates/register.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
 def check_allowed(input: str) -> bool:
     extensions = {'jpg', 'png', 'jpeg'}
