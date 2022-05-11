@@ -1,5 +1,5 @@
 from authentication import create, verify, auth_token, user_list, online_now, update_status, username_from_auth_token, change_token
-
+import save_picture
 
 print(create("user1","password1"), flush=True)
 
@@ -37,3 +37,11 @@ print(f"auth username{username}", flush=True)
 print(change_token("user1","987yughbjhiijlk"), flush=True)
 
 print(change_token("user5","0987uyghjbn"), flush=True)
+
+print(save_picture.get_id())
+save_picture.picture_location("user7","picture0.jpg")
+
+
+print(save_picture.get_id())
+save_picture.picture_location("user8","picture1.jpg")
+print(save_picture.get_id())
