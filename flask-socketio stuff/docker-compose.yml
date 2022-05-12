@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  mongo:
+    image: mongo:4.2.5
+  app:
+    build: .
+    environment:
+      WAIT_HOSTS: mongo:27017
+    ports:
+      - '5000:5000'
+    entrypoint:
+      - flask
+      - run
+      - --host=0.0.0.0
