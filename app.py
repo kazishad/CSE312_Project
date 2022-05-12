@@ -3,8 +3,8 @@ from flask import Flask, request, redirect, url_for, make_response
 import os
 from save_picture import *
 from authentication import *
-
-
+from logout import *
+from authentication import *
 
 import db
 
@@ -71,11 +71,22 @@ def login():
     else:
         with open("templates/Login.html") as f:
             return f.read()
-        
+    return redirect(url_for("root"))
 
-    
+
 def sanitize_data(data: str) -> str:
     return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
+
+    
+@app.route("/logout", methods=["POST"])
+def logout():
+    auth_token = request.headers.get("auth_token") # Obtain auth token
+    success, username = username_from_auth_token(auth_token) # Obtain username by auth token
+    if success:
+        logout_user(username)
+        return "You are now logged out. Hope to see you again soon!"
+    else:
+        return "Unable to Logout: invalid auth_token"
 
 @app.route("/register", methods=["POST", "GET"])
 def register():

@@ -43,7 +43,7 @@ def change_prof_pic(username: str, new_path: str) -> bool:
         return False
 
 # updates status to input value, return false if status could not be updated 
-# or the accoutn could not be found
+# or the account could not be found
 def update_status(username: str, status: bool) -> bool:
     db_return = cred_collection.find_one({"username":username})
     if db_return:
@@ -93,7 +93,7 @@ def online_now() -> list:
 
 # returns the a tuple (True, <username>) if the account was found
 # or (False, None) if there are no accounts with the same auth_token could not be found
-def username_from_auth_token(token: str):
+def username_from_auth_token(token: str) -> tuple:
     hashed_token = hashlib.sha256(token.encode()).hexdigest()
     db_return = cred_collection.find_one({"auth_token":hashed_token})
     if db_return:
