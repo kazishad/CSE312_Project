@@ -1,5 +1,5 @@
 import re
-from flask import Flask, make_response, request, redirect, url_for, escape
+from flask import Flask, make_response, request, redirect, url_for
 import os
 from save_picture import *
 from authentication import *
