@@ -40,6 +40,9 @@ def root():
     return final_content
 
     
+
+
+    
 @app.route("/<profile>")
 def profile(profile):
     returnhtml = ""
@@ -55,6 +58,7 @@ def profile(profile):
                         
                 else:
                     returnhtml = open("templates/otherProfile.html").read()
+                
                 returnhtml = returnhtml.replace("{{user}}", profile)
 
                 # get picture
@@ -73,8 +77,12 @@ def profile(profile):
         return "not a valid profile"
 
     
-def sanitize_data(data: str) -> str:
-    return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
+def sanitize_data(s: str) -> str:
+    s = s.replace("&", "&amp;")
+    s = s.replace(">", "&gt;")
+    s = s.replace("<", "&lt;")
+
+    return s
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -96,20 +104,18 @@ def login():
         with open("templates/Login.html") as f:
             return f.read()
     return redirect(url_for("root"))
-            
-def sanitize_data(data: str) -> str:
-    return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
 
 
 @app.route("/logout", methods=["POST"])
 def logout():
-    auth_token = request.headers.get("auth_token") # Obtain auth token
-    success, username = username_from_auth_token(auth_token) # Obtain username by auth token
-    if success:
+    authToken = request.cookies.get('auth')
+    username = username_from_auth_token(authToken)
+    if username:
         logout_user(username)
-        return "You are now logged out. Hope to see you again soon!"
+        s = '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
+        return s
     else:
-        return "Unable to Logout: invalid auth_token"
+        return '<div><h1>Invalid auth token</h1><a href="/login">log in here.</a></div>'
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
