@@ -1,0 +1,21 @@
+<!doctype html>
+<title>HOMEPAGE</title>
+
+<body>
+<h1>HOMEPAGE</h1>
+
+
+{{loop}}
+{{usernames}}
+{{end_loop}}
+
+
+<div>
+    <form action="/upload/{{user}}" method="post" enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+      </form>
+</div>
+
+
+</body>
