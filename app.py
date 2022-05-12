@@ -1,5 +1,5 @@
 import re
-from flask import Flask, request, redirect, url_for, make_response
+from flask import Flask, request, redirect, url_for, make_response, escape
 import os
 from save_picture import *
 from authentication import *
@@ -19,7 +19,8 @@ def root():
 @app.route("/<profile>")
 def profile(profile):
     returnhtml = ""
-
+    profile = escape(profile)
+    print(f"profile func {profile}", flush=True)
     if check_user(profile):
         if "auth" in request.cookies:
             authToken = request.cookies.get('auth')
@@ -57,7 +58,8 @@ def sanitize_data(data: str) -> str:
 def login():
     if request.method == "POST":
         form = request.form 
-        name = sanitize_data(form["usernameField"])
+        name = form["usernameField"]
+        print(f"before sanitization {name}", flush=True)
         print(f"sanitized name: {name}", flush=True)
         auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
         if auth_token_resp[0]:
@@ -101,6 +103,7 @@ def check_allowed(input: str) -> bool:
 
 @app.route("/upload/<profile>", methods=["POST","GET"])
 def upload(profile):
+    print(f"profile received {profile}", flush=True)
     if (request.method == "GET"):
         with open("templates/upload_image.html") as f:
             return f.read()
