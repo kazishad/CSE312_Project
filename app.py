@@ -1,27 +1,56 @@
 import re
-from tabnanny import check
-from flask import Flask, make_response, render_template, request, redirect, url_for
+from flask import Flask, make_response, request, redirect, url_for, escape
 import os
 from save_picture import *
 from authentication import *
-
-
+from logout import *
+from authentication import *
 
 import db
 from xsrf_tokens import custom_render_template, generate_xsrf_token, validate_xsrf_token
+from Template import *
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
 
 @app.route("/", methods=["POST", "GET"])
 def root():
-    return "<h1>root</h1>"
+
+    template =  open("templates/index.html").read() 
+    online = online_now()
+    authToken = request.cookies.get('auth')
+    user = username_from_auth_token(authToken)
+    loop_content = "<h3>Users online:</h3> <ul>"
+    for i in online:
+        if i != user:
+            e = escape(i)
+            print(e)
+            loop_content += f'<a href="/{i}"><li>' + e + '</li></a>'
+        
+
+    loop_content += "</ul>"
+    loop_start_tag = "{{loop}}"
+    loop_end_tag = "{{end_loop}}"
+
+    start_index = template.find(loop_start_tag)
+    end_index = template.find(loop_end_tag)
+
+    final_content = (
+            template[:start_index]
+            + loop_content
+            + template[end_index + len(loop_end_tag) :]
+        )
+    return final_content
+
+    
+
 
     
 @app.route("/<profile>")
 def profile(profile):
     returnhtml = ""
-
+    profile = escape(profile)
+    print(f"profile func {profile}", flush=True)
     if check_user(profile):
         if "auth" in request.cookies:
             authToken = request.cookies.get('auth')
@@ -34,7 +63,7 @@ def profile(profile):
 
                 # get picture
                 filename = get_path(profile)
-                print()
+
                 if filename != None:
                     s = 'src="' + filename + '"'
                     returnhtml = returnhtml.replace("{{filename}}", s)
@@ -52,7 +81,12 @@ def profile(profile):
         return "not a valid profile"
 
     
+def sanitize_data(s: str) -> str:
+    s = s.replace("&", "&amp;")
+    s = s.replace(">", "&gt;")
+    s = s.replace("<", "&lt;")
 
+    return s
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -77,6 +111,21 @@ def login():
         xsrf_token = generate_xsrf_token()
         return custom_render_template("templates/Login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
+    return redirect(url_for("root"))
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    authToken = request.cookies.get('auth')
+    username = username_from_auth_token(authToken)
+    if username:
+        logout_user(username)
+        s = '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
+        return s
+    else:
+        return '<div><h1>Invalid auth token</h1><a href="/login">log in here.</a></div>'
+
+
 @app.route("/register", methods=["POST", "GET"])
 def register():
 
@@ -88,8 +137,11 @@ def register():
             form = request.form
             print(form, flush=True)
             print("DICT", form.to_dict, type( form.to_dict),flush=True)
-            create(form["usernameField"], form["passwordField"])
-            return redirect(url_for("login"))
+            if create(form["usernameField"], form["passwordField"]):
+                return redirect(url_for("login"))
+            else:
+                return "Username exists, choose another one, bitch"
+
         else:
             return "Invalid XSRF Token :("
     else:
@@ -105,6 +157,7 @@ def check_allowed(input: str) -> bool:
 
 @app.route("/upload/<profile>", methods=["POST","GET"])
 def upload(profile):
+    print(f"profile received {profile}", flush=True)
     if (request.method == "GET"):
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
