@@ -72,11 +72,11 @@ def profile(profile):
                 return returnhtml
                 
             else:
-                return "auth token doesn't match"
+                return '<div><h1>sign in</h1><a href="/login">Try again</a></div>'
         else:
-            return "not logged in"
+            return '<div><h1>sign in</h1><a href="/login">Try again</a></div>'
     else:
-        return "not a valid profile"
+        return '<div><h1>Not a valid profile</h1><a href="/">Click here to go to the homepage</a></div>'
 
     
 def sanitize_data(s: str) -> str:
@@ -103,9 +103,9 @@ def login():
                 return response
                 
             else:
-                return "wrong credentials"
+                return '<div><h1>Invalid credentials</h1><a href="/login">Try again</a></div>'
         else:
-            return "Invalid XSRF Token :("
+            return '<div><h1>Invalid xsrf token</h1><a href="/login">Try again</a></div>'
     else:
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
@@ -120,8 +120,7 @@ def logout():
     username = username_from_auth_token(authToken)
     if username:
         logout_user(username)
-        s = '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
-        return s
+        return '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
     else:
         return '<div><h1>Invalid auth token</h1><a href="/login">log in here.</a></div>'
 
