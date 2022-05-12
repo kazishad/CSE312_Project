@@ -22,7 +22,9 @@ def root():
     loop_content = "<h3>Users online:</h3> <ul>"
     for i in online:
         if i != user:
-            loop_content += f'<a href="/{i}"><li>' + i + '</li></a>'
+            e = escape(i)
+            print(e)
+            loop_content += f'<a href="/{i}"><li>' + e + '</li></a>'
         
 
     loop_content += "</ul>"
