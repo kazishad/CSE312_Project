@@ -1,5 +1,5 @@
 import re
-from flask import Flask, make_response, request, redirect, url_for, escape
+from flask import Flask, make_response, request, redirect, url_for
 import os
 from save_picture import *
 from authentication import *
@@ -23,9 +23,7 @@ def root():
     loop_content = "<h3>Users online:</h3> <ul>"
     for i in online:
         if i != user:
-            e = escape(i)
-            print(e)
-            loop_content += f'<a href="/{i}"><li>' + e + '</li></a>'
+            loop_content += f'<a href="/{i}"><li>' + sanitize_data(i) + '</li></a>'
         
 
     loop_content += "</ul>"
@@ -49,7 +47,7 @@ def root():
 @app.route("/<profile>")
 def profile(profile):
     returnhtml = ""
-    profile = escape(profile)
+    profile = sanitize_data(profile)
     print(f"profile func {profile}", flush=True)
     if check_user(profile):
         if "auth" in request.cookies:
@@ -87,6 +85,8 @@ def sanitize_data(s: str) -> str:
     s = s.replace("<", "&lt;")
 
     return s
+
+
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
