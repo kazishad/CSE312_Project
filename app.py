@@ -7,13 +7,37 @@ from logout import *
 from authentication import *
 
 import db
+from Template import *
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
 
 @app.route("/", methods=["POST", "GET"])
 def root():
-    return "<h1>root</h1>"
+
+    template =  open("templates/index.html").read() 
+    online = online_now()
+    authToken = request.cookies.get('auth')
+    user = username_from_auth_token(authToken)
+    loop_content = "<h3>Users online:</h3> <ul>"
+    for i in online:
+        if i != user:
+            loop_content += f'<a href="/{i}"><li>' + i + '</li></a>'
+        
+
+    loop_content += "</ul>"
+    loop_start_tag = "{{loop}}"
+    loop_end_tag = "{{end_loop}}"
+
+    start_index = template.find(loop_start_tag)
+    end_index = template.find(loop_end_tag)
+
+    final_content = (
+            template[:start_index]
+            + loop_content
+            + template[end_index + len(loop_end_tag) :]
+        )
+    return final_content
 
     
 @app.route("/<profile>")
@@ -27,16 +51,15 @@ def profile(profile):
             if user:
                 if user == profile:
 
-                    with open("templates/profile.html") as f:
-                        returnhtml = f.read()
+                    returnhtml = open("templates/profile.html").read()
+                        
                 else:
-                    with open("templates/otherProfile.html") as f:
-                        returnhtml = f.read()
+                    returnhtml = open("templates/otherProfile.html").read()
                 returnhtml = returnhtml.replace("{{user}}", profile)
 
                 # get picture
                 filename = get_path(profile)
-                print()
+
                 if filename != None:
                     s = 'src="' + filename + '"'
                     returnhtml = returnhtml.replace("{{filename}}", s)
@@ -77,7 +100,7 @@ def login():
 def sanitize_data(data: str) -> str:
     return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
 
-    
+
 @app.route("/logout", methods=["POST"])
 def logout():
     auth_token = request.headers.get("auth_token") # Obtain auth token
