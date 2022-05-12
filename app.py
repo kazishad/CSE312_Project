@@ -50,15 +50,16 @@ def profile(profile):
         return "not a valid profile"
 
     
-
+def sanitize_data(data: str) -> str:
+    return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         form = request.form 
         name = sanitize_data(form["usernameField"])
-        password = sanitize_data(form["passwordField"])
-        auth_token_resp = auth_token(name, password)
+        print(f"sanitized name: {name}", flush=True)
+        auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
         if auth_token_resp[0]:
             s = url_for("profile", profile=name)
 
@@ -71,9 +72,7 @@ def login():
     else:
         with open("templates/Login.html") as f:
             return f.read()
-        
-
-    
+            
 def sanitize_data(data: str) -> str:
     return data.replace(">", "&gt;").replace("<", "&lt;").replace("&","&amp;")
 
@@ -86,10 +85,7 @@ def register():
         form = request.form
         print(form, flush=True)
         print("DICT", form.to_dict, type( form.to_dict),flush=True)
-        name = sanitize_data(form["usernameField"])
-        password = sanitize_data(form["passwordField"])
-        print(f"username: {name}, password: {password}", flush=True)
-        if create(name, password):
+        if create(form["usernameField"], form["passwordField"]):
             return redirect(url_for("login"))
         else:
             return "Username exists, choose another one, bitch"
