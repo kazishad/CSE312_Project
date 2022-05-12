@@ -28,13 +28,9 @@ def profile(profile):
             user = username_from_auth_token(authToken)
             if user:
                 if user == profile:
-
-                    with open("templates/profile.html") as f:
-                        returnhtml = f.read()
+                    returnhtml = custom_render_template("templates/profile.html", "user", profile)
                 else:
-                    with open("templates/otherProfile.html") as f:
-                        returnhtml = f.read()
-                returnhtml = returnhtml.replace("{{user}}", profile)
+                    returnhtml = custom_render_template("templates/otherProfile.html", "user", profile)
 
                 # get picture
                 filename = get_path(profile)
@@ -42,6 +38,10 @@ def profile(profile):
                 if filename != None:
                     s = 'src="' + filename + '"'
                     returnhtml = returnhtml.replace("{{filename}}", s)
+
+                # Populate xsrf token in form
+                xsrf_token = generate_xsrf_token()
+                returnhtml = returnhtml.replace("{{xsrf_token}}", xsrf_token)
                 return returnhtml
                 
             else:
@@ -69,6 +69,7 @@ def login():
         else:
             return "wrong credentials"
     else:
+        # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
         return custom_render_template("templates/Login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
@@ -84,6 +85,7 @@ def register():
         create(form["usernameField"], form["passwordField"])
         return redirect(url_for("login"))
     else:
+        # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
         return custom_render_template("templates/Register.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
@@ -96,11 +98,12 @@ def check_allowed(input: str) -> bool:
 @app.route("/upload/<profile>", methods=["POST","GET"])
 def upload(profile):
     if (request.method == "GET"):
+        # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
-        # HTML templating - adds xsrf token to form
         return custom_render_template("templates/upload_image.html", "xsrf_token", xsrf_token)
     elif (request.method == "POST"):
-        xsrf_token = request.headers.get('xsrf token') # Obtain xsrf token
+        xsrf_token = request.form["xsrf_token"] # Obtain xsrf token
+        print(f"==> xsrf_token (singular) was: {xsrf_token} of type {type(xsrf_token)}", flush=True)
         valid_xsrf_token = validate_xsrf_token(xsrf_token) # Check xsrf token against those stored in db
         if valid_xsrf_token:
             file = request.files['file']
