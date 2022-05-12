@@ -18,7 +18,7 @@ def create(username: str, password: str) -> bool:
         salt = bcrypt.gensalt()
         hashed_pass = bcrypt.hashpw(b_pass,salt)
 
-        cred_collection.insert_one({"username": username, "password":hashed_pass, "pic_path":"None", "status":True})
+        cred_collection.insert_one({"username": username, "password":hashed_pass, "pic_path":"None", "status":False})
         return True
 
 # returns true if the account exists and has been verified, false if the password or username is wrong,
