@@ -36,7 +36,7 @@ def get_xsrf_tokens() -> list:
 
 def validate_xsrf_token(xsrf_token: str) -> bool:
     """ Returns boolean: True if valid token | False if not found """
-    
+
     xsrf_tokens = get_xsrf_tokens()
     print(f"\n==> xsrf_tokens was {xsrf_tokens}", flush=True)
     for stored_xsrf_token in xsrf_tokens: # The tokens themselves are stored in the keys

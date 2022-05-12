@@ -57,17 +57,21 @@ def profile(profile):
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
-        form = request.form 
-        auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
-        if auth_token_resp[0]:
-            s = url_for("profile", profile=form["usernameField"])
+        valid_xsrf_token = validate_xsrf_token(request.form["xsrf_token"]) # Check xsrf token against those stored in db
+        if valid_xsrf_token:
+            form = request.form 
+            auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
+            if auth_token_resp[0]:
+                s = url_for("profile", profile=form["usernameField"])
 
-            response = make_response(redirect(s))
-            response.set_cookie('auth', auth_token_resp[1])
-            return response
-            
+                response = make_response(redirect(s))
+                response.set_cookie('auth', auth_token_resp[1])
+                return response
+                
+            else:
+                return "wrong credentials"
         else:
-            return "wrong credentials"
+            return "Invalid XSRF Token :("
     else:
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
@@ -79,11 +83,15 @@ def register():
     # with open('static/Register.html', 'r') as f:
     #     html_string = f.read()
     if request.method == "POST":
-        form = request.form
-        print(form, flush=True)
-        print("DICT", form.to_dict, type( form.to_dict),flush=True)
-        create(form["usernameField"], form["passwordField"])
-        return redirect(url_for("login"))
+        valid_xsrf_token = validate_xsrf_token(request.form["xsrf_token"]) # Check xsrf token against those stored in db
+        if valid_xsrf_token:
+            form = request.form
+            print(form, flush=True)
+            print("DICT", form.to_dict, type( form.to_dict),flush=True)
+            create(form["usernameField"], form["passwordField"])
+            return redirect(url_for("login"))
+        else:
+            return "Invalid XSRF Token :("
     else:
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
@@ -102,9 +110,7 @@ def upload(profile):
         xsrf_token = generate_xsrf_token()
         return custom_render_template("templates/upload_image.html", "xsrf_token", xsrf_token)
     elif (request.method == "POST"):
-        xsrf_token = request.form["xsrf_token"] # Obtain xsrf token
-        print(f"==> xsrf_token (singular) was: {xsrf_token} of type {type(xsrf_token)}", flush=True)
-        valid_xsrf_token = validate_xsrf_token(xsrf_token) # Check xsrf token against those stored in db
+        valid_xsrf_token = validate_xsrf_token(request.form["xsrf_token"]) # Check xsrf token against those stored in db
         if valid_xsrf_token:
             file = request.files['file']
             input_name = file.filename
