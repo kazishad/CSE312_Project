@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 from flask_socketio import emit
 from flask_socketio import join_room
 
-from room_db import *
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
 
@@ -275,6 +275,8 @@ def on_appendGameData(data):
 localStorage= []
 idCounter= [0]
 roomTreacker= [""]
+onhave=[True]
+roomDataBase=[]
 @app.route('/chat', methods=[ "GET"])
 def flaskSocketio():
     return open("templates/ss.html").read()
@@ -314,20 +316,48 @@ def on_handleChat(data):
 
 @socketio.on('join')
 def on_join(data):
-    print(f"enters join room", flush=True)
-    username = data['username']
-    room = data['room']
-    count = get_count(room)
-    print(f"count {count}",flush=True)
-    if count < 2:
+    onhave[0]=True
+    if (len(roomDataBase)==0):
+        onhave[0]=False
+        roomDataBase.append({data['room']:1})
+        username = data['username']
+        room = data['room']
         join_room(room)
-        set_room(room, count + 1)
-        print(f"data inside if statment {data}", flush=True)
+        print(data, flush=True)
         localStorage.append(data)
         print(localStorage, flush=True)
         emit('enterRoom',username + ' has entered the room.', to=room)
     else:
-        return "Too many people in " + room
+        for x in roomDataBase:
+            if data['room'] in x.keys():
+                if x[data['room']]==2:
+                    onhave[0]=False
+                    username = data['username']
+                    emit('fullRoom', username)
+                    break
+                    # tell user that it is full
+                    pass
+                else:
+                    onhave[0]=False
+                    x[data['room']]+=1
+                    username = data['username']
+                    room = data['room']
+                    join_room(room)
+                    print(data, flush=True)
+                    localStorage.append(data)
+                    print(localStorage, flush=True)
+                    emit('enterRoom',username + ' has entered the room.', to=room)
+                    break
+        if onhave[0]==True:
+            print("------------------no more of this", flush=True)
+            roomDataBase.append({data['room']:1})
+            username = data['username']
+            room = data['room']
+            join_room(room)
+            print(data, flush=True)
+            localStorage.append(data)
+            print(localStorage, flush=True)
+            emit('enterRoom',username + ' has entered the room.', to=room)
         
 
 

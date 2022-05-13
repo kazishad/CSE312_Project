@@ -81,6 +81,10 @@
 
             // document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
         })
+        socket.on('fullRoom', function(data){
+            document.getElementById("createInjectionRoom").innerHTML=""
+            alert("ChatRoom Is Full " + data)
+        })
     //http://localhost:5000/flaskSocketio
     </script>
 </head>
