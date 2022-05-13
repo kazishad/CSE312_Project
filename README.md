@@ -1,3 +1,14 @@
+
+## Team Members
+
+| Names | UBIT | Github Email |
+|-------|:------:|:----------:|
+|Kazi Shadman | `kazishad` | `kazishad@buffalo.edu` |
+|Shkar Bassam | `mbassam` | `mbassam@buffalo.edu` |
+|Aleena Sheikh |  `aleenash` | `aleenabsheikh@gmail.com` |
+|Kevin Wang | `kwang47` | `kwang47@buffalo.edu` |
+|Wren Martinson | `wrenmart` | `wrenmart@buffalo.edu` |
+
 # Account creation and Authentication
 
 The authentication system has two functions, the first is creating an account, and the second is verifying the user's identity. It creates the account by taking in the username and password on its `create()` function, generating a salt, hashing the password using the salt, and saving it on the database. The function returns `True` to state the account was created. It verifies the account by taking in the username and password on its `verify()` function, getting the username and hashed password from the database, encoding the given password and comparing them.
