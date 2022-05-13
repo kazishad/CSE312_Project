@@ -1,6 +1,0 @@
-pymongo
-bcrypt
-Flask
-flask
-flask_sockets
-flask_socketio
