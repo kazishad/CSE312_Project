@@ -206,9 +206,6 @@ def chat():
     if "auth" not in request.cookies:
         return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
     else:
-        authToken = request.cookies.get('auth')
-        user = username_from_auth_token(authToken)
-        
         return open("templates/ss.html").read()
 
 @socketio.on('handleUpVote')
