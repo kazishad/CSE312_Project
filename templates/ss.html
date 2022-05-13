@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-
+    
 <!--    this is used to test if there is a connection -->
     <script type="text/javascript" charset="utf-8">
 
         var socket = io();
 
         // This will be used to make a chat room conenection and join it and injection of html
-        function chatroom(){
+        function chatroom(userInputUsername){
             var userInputUsername = document.getElementById("usernameInput").value;
             document.getElementById("usernameInput").value= "";
             var userInputRoom = document.getElementById("roomID").value;
@@ -17,7 +16,7 @@
             document.getElementById("createInjectionRoom").innerHTML= '' +
                 '<div style="border-style: inset;">\n' +
                 '<input type="text" id="hiddenValue" value="'+userInputUsername+'" hidden><br>'+
-                '    <h>Welcome</h>\n' +
+                '    <h>Welcome. Click to upvote! Blue messages have been upvoted</h>\n' +
                 '    <p id="addchat"></p>\n' +
                 '    <input type="text" id="oneToOneChat"><br><br>\n' +
                 '    <input type="submit" value="Submit" onclick="chatOneToOne()">\n' +
