@@ -1,7 +1,4 @@
 
-
-from flask_socketio import SocketIO, emit
-
 from flask import Flask, make_response, request, redirect, url_for
 import os
 from save_picture import *
@@ -10,27 +7,23 @@ from logout import *
 from authentication import *
 from xsrf_tokens import custom_render_template, generate_xsrf_token, validate_xsrf_token
 from Template import *
-from flask import Flask, render_template, request
+
 from flask_socketio import SocketIO
 from flask_socketio import emit
-from flask_socketio import join_room, leave_room
+from flask_socketio import join_room
 
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = './images'
+
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-localStorageGame= []
-idCounterGame= [0]
-roomTreackerGame= [""]
-allSent=[True]
-whoWin=""
-
-app.config['UPLOAD_FOLDER'] = './images'
-
-
 @app.route("/", methods=["POST", "GET"])
 def root():
+    if "auth" not in request.cookies:
+        return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+
 
     template =  open("templates/index.html").read() 
     online = online_now()
@@ -49,13 +42,17 @@ def root():
     start_index = template.find(loop_start_tag)
     end_index = template.find(loop_end_tag)
 
-    final_content = (
+    content = (
             template[:start_index]
             + loop_content
             + template[end_index + len(loop_end_tag) :]
         )
+    final_content = content.replace("{{user}}", user)
+
     return final_content
 
+
+    
 @app.route("/<profile>")
 def profile(profile):
     returnhtml = ""
@@ -84,18 +81,21 @@ def profile(profile):
                 return returnhtml
                 
             else:
-                return "auth token doesn't match"
+                return '<div><h1>no user found</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
         else:
-            return "not logged in"
+            return '<div><h1>no user found</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
     else:
-        return "not a valid profile"
+        return '<div><h1>Not a valid profile</h1><a href="/">Click here to go to the homepage</a></div>'
 
+    
 def sanitize_data(s: str) -> str:
     s = s.replace("&", "&amp;")
     s = s.replace(">", "&gt;")
     s = s.replace("<", "&lt;")
 
     return s
+
+
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -112,9 +112,10 @@ def login():
                 return response
                 
             else:
-                return "wrong credentials"
+                return '<div><h1>Invalid credentials</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+                
         else:
-            return "Invalid XSRF Token :("
+            return '<div><h1>Invalid xsrf token</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
     else:
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
@@ -128,8 +129,7 @@ def logout():
     username = username_from_auth_token(authToken)
     if username:
         logout_user(username)
-        s = '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
-        return s
+        return '<div><h1>You have been logged out.</h1><a href="/login">log in here.</a><a href="/register">register</a></div>'
     else:
         return '<div><h1>Invalid auth token</h1><a href="/login">log in here.</a></div>'
 
@@ -148,24 +148,6 @@ def register():
                 return redirect(url_for("login"))
             else:
                 return "Username exists, choose another one, bitch"
-
-@socketio.on('connect')
-def chat_connect():
-    print ('connected')
-
-
-@socketio.on('disconnect')
-def chat_disconnect():
-    print ("Client disconnected")
-
-@socketio.on('broadcast')
-def chat_broadcast(message):
-    print ("test")
-    emit("chat", {'data': message['data']})
-
-@socketio.on('message')
-def handle_message(data):
-    handle_websockets(data)
 
         else:
             return "Invalid XSRF Token :("
@@ -197,6 +179,7 @@ def upload(profile):
             print(f"input_name:{input_name}",flush=True)
             extension_type = input_name.split(".")[1]
             if not check_allowed(input_name):
+                
                 return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
             filename = "picture" + get_id() + "." + str(extension_type)
             authToken = request.cookies.get('auth')
@@ -214,10 +197,15 @@ def getImage(image):
 
     return pic_bytes(image)
 
+localStorageGame= []
+idCounterGame= [0]
+roomTreackerGame= [""]
+allSent=[True]
+whoWin=""
 
 @app.route('/game', methods=[ "GET"])
 def kevingame():
-    return render_template('kevinvideogame.html')
+    return  open("templates/kevinvideogame.html").read()
 @socketio.on('joinGameRoom')
 def on_join(data):
     username = data['username']
@@ -293,9 +281,9 @@ def on_appendGameData(data):
 localStorage= []
 idCounter= [0]
 roomTreacker= [""]
-@app.route('/flaskSocketio', methods=[ "GET"])
+@app.route('/chat', methods=[ "GET"])
 def flaskSocketio():
-    return render_template('ss.html')
+    return open("templates/ss.html").read()
 
 @socketio.on('handleUpVote')
 def on_handleUpVote(data):
@@ -340,13 +328,10 @@ def on_join(data):
     print(localStorage, flush=True)
     emit('enterRoom',username + ' has entered the room.', to=room)
 
+
 if __name__ == '__main__':
   
     # run() method of Flask class runs the application 
     # on the local development server.
-
-    socketio.run(app)
-
-    # port = int(os.environ.get('PORT', 5000))
-    # app.run(debug=True, host='0.0.0.0', port=port)
-
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
