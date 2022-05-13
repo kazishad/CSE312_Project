@@ -55,7 +55,11 @@ def profile(profile):
     if check_user(profile):
         if "auth" in request.cookies:
             authToken = request.cookies.get('auth')
+
             user = username_from_auth_token(authToken)
+
+            if user != None:
+                user = sanitize_data(user)
             if user:
                 if user == profile:
                     returnhtml = custom_render_template("templates/profile.html", "user", profile)
