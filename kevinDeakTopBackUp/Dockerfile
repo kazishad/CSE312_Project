@@ -2,7 +2,7 @@ FROM python:3.8
 
 WORKDIR /server
 RUN mkdir /server/images
-COPY ../../../Downloads/atest/atest .
+COPY . .
 
 RUN pip3 install -r requirements.txt
 
