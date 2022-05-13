@@ -15,6 +15,9 @@ app.config['UPLOAD_FOLDER'] = './images'
 
 @app.route("/", methods=["POST", "GET"])
 def root():
+    if "auth" not in request.cookies:
+        return '<div><h1>not logged in</h1><a href="/login">login</a><a href="/register">register</a></div>'
+
 
     template =  open("templates/index.html").read() 
     online = online_now()
@@ -72,11 +75,11 @@ def profile(profile):
                 return returnhtml
                 
             else:
-                return "auth token doesn't match"
+                return '<div><h1>no user found</h1><a href="/login">login</a><a href="/register">register</a></div>'
         else:
-            return "not logged in"
+            return '<div><h1>no user found</h1><a href="/login">login</a><a href="/register">register</a></div>'
     else:
-        return "not a valid profile"
+        return '<div><h1>Not a valid profile</h1><a href="/">Click here to go to the homepage</a></div>'
 
     
 def sanitize_data(s: str) -> str:
@@ -103,9 +106,10 @@ def login():
                 return response
                 
             else:
-                return "wrong credentials"
+                return '<div><h1>Invalid credentials</h1><a href="/login">login</a><a href="/register">register</a></div>'
+                
         else:
-            return "Invalid XSRF Token :("
+            return '<div><h1>Invalid xsrf token</h1><a href="/login">login</a><a href="/register">register</a></div>'
     else:
         # Populate xsrf token in form
         xsrf_token = generate_xsrf_token()
@@ -120,8 +124,7 @@ def logout():
     username = username_from_auth_token(authToken)
     if username:
         logout_user(username)
-        s = '<div><h1>You are not logged in.</h1><a href="/login">log in here.</a></div>'
-        return s
+        return '<div><h1>You have been logged out.</h1><a href="/login">log in here.</a><a href="/register">register</a></div>'
     else:
         return '<div><h1>Invalid auth token</h1><a href="/login">log in here.</a></div>'
 
@@ -172,6 +175,7 @@ def upload(profile):
             print(f"input_name:{input_name}",flush=True)
             extension_type = input_name.split(".")[1]
             if not check_allowed(input_name):
+                
                 return f"Wrong file type uploaded, <br/>Allowed file type are: jpg, png, and jpeg <br/>The uploaded file type is: {extension_type}"
             filename = "picture" + get_id() + "." + str(extension_type)
             authToken = request.cookies.get('auth')
