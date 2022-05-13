@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 from flask_socketio import emit
 from flask_socketio import join_room
 
-
+from room_db import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './images'
 
@@ -21,6 +21,7 @@ socketio = SocketIO(app)
 
 @app.route("/", methods=["POST", "GET"])
 def root():
+    print("enters route", flush=True)
     if "auth" not in request.cookies:
         return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
 
@@ -206,14 +207,7 @@ whoWin=""
 @app.route('/game', methods=[ "GET"])
 def kevingame():
     return  open("templates/kevinvideogame.html").read()
-@socketio.on('joinGameRoom')
-def on_join(data):
-    username = data['username']
-    room = data['room']
-    join_room(room)
-    myJson = {"username": username, "room": room, "TrunUsed": False, "pick": ""}
-    localStorageGame.append(myJson)
-    emit('enterGameRoom',username + ' has entered the room.', to=room)
+
 @socketio.on('startgame')
 def on_startgame(data):
     for x in localStorageGame:
@@ -320,13 +314,21 @@ def on_handleChat(data):
 
 @socketio.on('join')
 def on_join(data):
+    print(f"enters join room", flush=True)
     username = data['username']
     room = data['room']
-    join_room(room)
-    print(data, flush=True)
-    localStorage.append(data)
-    print(localStorage, flush=True)
-    emit('enterRoom',username + ' has entered the room.', to=room)
+    count = get_count(room)
+    print(f"count {count}",flush=True)
+    if count < 2:
+        join_room(room)
+        set_room(room, count + 1)
+        print(f"data inside if statment {data}", flush=True)
+        localStorage.append(data)
+        print(localStorage, flush=True)
+        emit('enterRoom',username + ' has entered the room.', to=room)
+    else:
+        return "Too many people in " + room
+        
 
 
 if __name__ == '__main__':
