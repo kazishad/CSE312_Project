@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+<!--    this is used to test if there is a connection -->
+    <script type="text/javascript" charset="utf-8">
+
+        var socket = io();
+
+        // This will be used to make a chat room conenection and join it and injection of html
+        function chatroom(){
+            var userInputUsername = document.getElementById("usernameInput").value;
+            document.getElementById("usernameInput").value= "";
+            var userInputRoom = document.getElementById("roomID").value;
+            document.getElementById("roomID").value= "";
+            document.getElementById("createInjectionRoom").innerHTML= '' +
+                '<div style="border-style: inset;">\n' +
+                '<input type="text" id="hiddenValue" value="'+userInputUsername+'" hidden><br>'+
+                '    <h>Welcome</h>\n' +
+                '    <p id="addchat"></p>\n' +
+                '    <input type="text" id="oneToOneChat"><br><br>\n' +
+                '    <input type="submit" value="Submit" onclick="chatOneToOne()">\n' +
+                '  </div>';
+            socket.emit('join', {username: userInputUsername, room: userInputRoom});
+        }
+        socket.on('enterRoom', function(data){
+            // console.log(data);
+            document.getElementById("addchat").innerHTML+= "<p>"+data+ "<br></p>"
+        })
+        function chatOneToOne(){
+            var hiddenvalueName= document.getElementById("hiddenValue").value;
+            var userInput = document.getElementById("oneToOneChat").value;
+            document.getElementById("oneToOneChat").value= "";
+            // console.log(hiddenvalueName)
+            // console.log(userInput)
+            socket.emit('handleChat', {username: hiddenvalueName, message: userInput});
+        }
+        socket.on('appendMessage', function(data){
+            // console.log(data);
+            // console.log(data["idchat"]);
+            idtagEvent= data['idchat']
+            document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
+
+        })
+        function upvote(dataId){
+                var hiddenvalueName= document.getElementById("hiddenValue").value;
+                socket.emit('handleUpVote', {username: hiddenvalueName, tagId: dataId});
+                // console.log(dataId)
+        }
+        socket.on('applyUpVote', function(data){
+            // console.log(data);
+            idtagEvent= data['tagId']
+            if (document.getElementById(""+data['tagId']+"") !== null){
+                document.getElementById(""+data['tagId']+"").style.background="DodgerBlue"
+                document.getElementById(""+data['tagId']+"").setAttribute('onclick', "downvote("+idtagEvent+")")
+            }else{
+
+            }
+
+
+            // document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
+        })
+
+
+
+        function downvote(dataId){
+            var hiddenvalueName= document.getElementById("hiddenValue").value;
+            socket.emit('handleDownVote', {username: hiddenvalueName, tagId: dataId});
+            // console.log(dataId)
+        }
+        socket.on('applyDownVote', function(data){
+            // console.log(data);
+            idtagEvent= data['tagId']
+            if (document.getElementById(""+data['tagId']+"") !== null){
+                document.getElementById(""+data['tagId']+"").style.background=""
+                document.getElementById(""+data['tagId']+"").setAttribute('onclick', "upvote("+idtagEvent+")")
+            }else{
+
+            }
+
+            // document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
+        })
+    //http://localhost:5000/flaskSocketio
+    </script>
+</head>
+<body>
+<h1>hi</h1>
+<div >
+
+    <label >Name:</label>
+    <input type="text" id="usernameInput" name="username"><br><br>
+    <label >Room:</label>
+    <input type="text" id="roomID" name="room"><br><br>
+    <input type="submit" value="Submit" onclick="chatroom()" >
+
+
+</div>
+<div id="createInjectionRoom">
+</div>
+
+</body>
+</html>
