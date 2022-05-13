@@ -1,0 +1,20 @@
+<!doctype html>
+<title>HOMEPAGE</title>
+
+<body>
+<h1>HOMEPAGE</h1>
+
+
+{{loop}}
+{{usernames | safe}}
+{{end_loop}}
+
+
+<div>
+    <form action="/logout" method="post" enctype=multipart/form-data>
+        <input type=submit value=logout>
+      </form>
+</div>
+
+
+</body>

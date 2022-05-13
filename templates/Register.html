@@ -3,10 +3,10 @@
 
         
         <form id="myForm" action="#" method="post">
+            <input value="{{xsrf_token}}" name="xsrf_token" hidden>
             <!-- <input type="text" id="emailField" class="fields" name="emailField" placeholder="email address"><br> -->
             <input type="text" id="usernameField" class="fields" name="usernameField" placeholder="username"><br>
             <input type="password" id="passwordField" class="fields" name="passwordField" placeholder="password"><br>
-            <input type="password" id="passwordField2" class="fields" name="passwordField2" placeholder="re-enter password"><br>
             <!-- <input type="date" id="dateField" class="fields" name="dateField" placeholder="birthday"><br> -->
             <input type="submit" value="Register">
         </form>
