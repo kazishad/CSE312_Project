@@ -208,9 +208,8 @@ def chat():
     else:
         authToken = request.cookies.get('auth')
         user = username_from_auth_token(authToken)
-        f = open("templates/ss.html").read()
-        f.replace("{{user}}", user)
-        return 
+        
+        return open("templates/ss.html").read()
 
 @socketio.on('handleUpVote')
 def on_handleUpVote(data):
