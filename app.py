@@ -279,7 +279,10 @@ onhave=[True]
 roomDataBase=[]
 @app.route('/chat', methods=[ "GET"])
 def flaskSocketio():
-    return open("templates/ss.html").read()
+    if "auth" not in request.cookies:
+        return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+    else:
+        return open("templates/ss.html").read()
 
 @socketio.on('handleUpVote')
 def on_handleUpVote(data):

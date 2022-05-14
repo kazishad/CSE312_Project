@@ -17,7 +17,7 @@
             document.getElementById("createInjectionRoom").innerHTML= '' +
                 '<div style="border-style: inset;">\n' +
                 '<input type="text" id="hiddenValue" value="'+userInputUsername+'" hidden><br>'+
-                '    <h>Welcome</h>\n' +
+                '    <h>Welcome! Click to upvote. Blue means it has been upvoted</h>\n' +
                 '    <p id="addchat"></p>\n' +
                 '    <input type="text" id="oneToOneChat"><br><br>\n' +
                 '    <input type="submit" value="Submit" onclick="chatOneToOne()">\n' +
@@ -92,9 +92,9 @@
 <h1>Chat Room</h1>
 <div >
 
-    <label >Name:</label>
+    <label >Enter an anonymous username:</label>
     <input type="text" id="usernameInput" name="username"><br><br>
-    <label >Room:</label>
+    <label >Topic:</label>
     <input type="text" id="roomID" name="room"><br><br>
     <input type="submit" value="Submit" onclick="chatroom()" >
 
