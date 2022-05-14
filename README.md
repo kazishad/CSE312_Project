@@ -1,3 +1,6 @@
+## Report
+The report is in the folder labeled `reports`, alternatively [click here](https://drive.google.com/drive/folders/1nhWZlB2AqQzha-IXWn8WPgfKEPMN_UT6?usp=sharing)
+
 ## About Application and how to use
 
 We developed an anonymous chat platform.
