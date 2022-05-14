@@ -22,14 +22,18 @@ socketio = SocketIO(app)
 @app.route("/", methods=["POST", "GET"])
 def root():
     print("enters route", flush=True)
+    
     if "auth" not in request.cookies:
         return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
-
-
-    template =  open("templates/index.html").read() 
-    online = online_now()
+    
     authToken = request.cookies.get('auth')
     user = username_from_auth_token(authToken)
+    if user == None:
+        return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+    template =  open("templates/index.html").read() 
+    online = online_now()
+    
+    
     loop_content = "<h3>Users online:</h3> <ul>"
     for i in online:
         if i != user:
@@ -64,7 +68,7 @@ def profile(profile):
             authToken = request.cookies.get('auth')
             user = username_from_auth_token(authToken)
             if user:
-                if user == profile:
+                if sanitize_data(user) == profile:
                     returnhtml = custom_render_template("templates/profile.html", "user", profile)
                 else:
                     returnhtml = custom_render_template("templates/otherProfile.html", "user", profile)
@@ -82,7 +86,7 @@ def profile(profile):
                 return returnhtml
                 
             else:
-                return '<div><h1>no user found</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+                return '<div><h1>Not Logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
         else:
             return '<div><h1>no user found</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
     else:
@@ -198,80 +202,6 @@ def getImage(image):
 
     return pic_bytes(image)
 
-localStorageGame= []
-idCounterGame= [0]
-roomTreackerGame= [""]
-allSent=[True]
-whoWin=""
-
-@app.route('/game', methods=[ "GET"])
-def kevingame():
-    return  open("templates/kevinvideogame.html").read()
-
-@socketio.on('startgame')
-def on_startgame(data):
-    for x in localStorageGame:
-        if x["username"] == data['username']:
-            roomTreackerGame[0]= x["room"]
-    emit('genGame', {"username":data['username'] },to=roomTreackerGame[0])
-@socketio.on('appendGameData')
-def on_appendGameData(data):
-
-    allSent[0]=True
-    for x in localStorageGame:
-        if x["username"] == data['username']:
-            x["TrunUsed"]=True
-            x["pick"]=data['pick']
-            roomTreackerGame[0]= x["room"]
-
-    for x in localStorageGame:
-        # print("-----------------",flush=True)
-        # print(data,flush=True)
-        # print(x,flush=True)
-        if x["TrunUsed"]==False:
-            allSent[0]=False
-    if (allSent[0] ==True):
-
-        print("-----------------",flush=True)
-        print(localStorageGame[0],flush=True)
-        print(localStorageGame[1],flush=True)
-        if(localStorageGame[0]['pick']=='rock' and localStorageGame[1]['pick']=='paper'):
-            whoWin= str(localStorageGame[1]['username'])
-        elif(localStorageGame[0]['pick']=='rock' and localStorageGame[1]['pick']=='scissor'):
-            whoWin= str(localStorageGame[0]['username'])
-        elif(localStorageGame[0]['pick']=='rock' and localStorageGame[1]['pick']=='rock'):
-            whoWin= "Tie"
-        elif(localStorageGame[0]['pick']=='paper' and localStorageGame[1]['pick']=='scissor'):
-            whoWin= str(localStorageGame[1]['username'])
-        elif(localStorageGame[0]['pick']=='paper' and localStorageGame[1]['pick']=='rock'):
-            whoWin= str(localStorageGame[0]['username'])
-        elif(localStorageGame[0]['pick']=='paper' and localStorageGame[1]['pick']=='paper'):
-            whoWin= "Tie"
-        elif(localStorageGame[0]['pick']=='scissor' and localStorageGame[1]['pick']=='paper'):
-            whoWin= str(localStorageGame[0]['username'])
-        elif(localStorageGame[0]['pick']=='scissor' and localStorageGame[1]['pick']=='rock'):
-            whoWin= str(localStorageGame[1]['username'])
-        else:
-            whoWin= "Tie"
-
-        myJson= {"winner":"","losser":"","tie":""}
-        if( whoWin=="Tie"):
-            myJson["tie"]="both"
-        elif (whoWin == localStorageGame[0]['username']):
-            myJson["winner"]=localStorageGame[0]['username']
-            myJson["losser"]=localStorageGame[1]['username']
-        else:
-            myJson["winner"]=localStorageGame[1]['username']
-            myJson["losser"]=localStorageGame[0]['username']
-
-        print("-a-aa--aa-a--a", flush=True)
-        print(myJson)
-        emit('gameResultAppend',myJson, to=roomTreackerGame[0])
-    else:
-        pass
-
-
-
 localStorage= []
 idCounter= [0]
 roomTreacker= [""]
@@ -279,10 +209,16 @@ onhave=[True]
 roomDataBase=[]
 @app.route('/chat', methods=[ "GET"])
 def flaskSocketio():
+    
     if "auth" not in request.cookies:
         return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
-    else:
-        return open("templates/ss.html").read()
+    
+    authToken = request.cookies.get('auth')
+    user = username_from_auth_token(authToken)
+    if user == None:
+        return '<div><h1>not logged in</h1><a href="/login">login</a></br><a href="/register">register</a></div>'
+
+    return open("templates/ss.html").read()
 
 @socketio.on('handleUpVote')
 def on_handleUpVote(data):
@@ -290,7 +226,7 @@ def on_handleUpVote(data):
         if x["username"] == data['username']:
             roomTreacker[0]= x["room"]
             break
-    toJson = {"username" : data['username'], "tagId": data['tagId']}
+    toJson = {"username" : sanitize_data(data['username']), "tagId": data['tagId']}
     emit('applyUpVote',toJson, to=roomTreacker[0])
 
 @socketio.on('handleDownVote')
@@ -299,7 +235,7 @@ def on_handleDownVote(data):
         if x["username"] == data['username']:
             roomTreacker[0]= x["room"]
             break
-    toJson = {"username" : data['username'], "tagId": data['tagId']}
+    toJson = {"username" : sanitize_data(data['username']), "tagId": data['tagId']}
     emit('applyDownVote',toJson, to=roomTreacker[0])
 
 @socketio.on('handleChat')
@@ -314,7 +250,7 @@ def on_handleChat(data):
     protectionHtml= protectionHtml.replace('&','&amp')
     protectionHtml= protectionHtml.replace('<','&lt')
     protectionHtml= protectionHtml.replace('>','&gt')
-    toJson = {"username" : data['username'], "message": protectionHtml,"idchat": idCounter[0]}
+    toJson = {"username" : sanitize_data(data['username']), "message": protectionHtml,"idchat": idCounter[0]}
     emit('appendMessage',toJson, to=roomTreacker[0])
 
 @socketio.on('join')
@@ -323,7 +259,7 @@ def on_join(data):
     if (len(roomDataBase)==0):
         onhave[0]=False
         roomDataBase.append({data['room']:1})
-        username = data['username']
+        username = sanitize_data(data['username'])
         room = data['room']
         join_room(room)
         print(data, flush=True)
@@ -335,7 +271,7 @@ def on_join(data):
             if data['room'] in x.keys():
                 if x[data['room']]==2:
                     onhave[0]=False
-                    username = data['username']
+                    username = sanitize_data(data['username'])
                     emit('fullRoom', username)
                     break
                     # tell user that it is full
@@ -343,7 +279,7 @@ def on_join(data):
                 else:
                     onhave[0]=False
                     x[data['room']]+=1
-                    username = data['username']
+                    username = sanitize_data(data['username'])
                     room = data['room']
                     join_room(room)
                     print(data, flush=True)
@@ -354,7 +290,7 @@ def on_join(data):
         if onhave[0]==True:
             print("------------------no more of this", flush=True)
             roomDataBase.append({data['room']:1})
-            username = data['username']
+            username = sanitize_data(data['username'])
             room = data['room']
             join_room(room)
             print(data, flush=True)

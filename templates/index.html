@@ -9,7 +9,6 @@
 <div>
 <h1>HOMEPAGE</h1>
 </div>
-<a href="/{{user}}">your profile</a></br>
 {{loop}}
 {{usernames | safe}}
 {{end_loop}}
@@ -25,7 +24,8 @@
   <h3>Note for grader:</h3>
   <h4>we developed an anonymous chat platform.</h4>
   <h4> You can login at /login, register for an account at /register, homepage is at /, visit any profile by going to /&lt;username&gt;</h4>
-  <h4>The chat at /chat works by adding an anonymous username and picking a topic (the other user has to have the same topic)</h4>
+  <h4>The chat at /chat works by adding an anonymous username and picking a topic (the other user has to have the same topic, exactly)</h4>
+  <h4>Live interaction is upvoting DMs, which you can click on (click again to un-upvote) and it will turn blue to indicate that it has been upvoted</h4>
 </div>
 
 

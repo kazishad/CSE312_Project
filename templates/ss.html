@@ -39,6 +39,7 @@
         socket.on('appendMessage', function(data){
             // console.log(data);
             // console.log(data["idchat"]);
+            alert("You recieved a message ")
             idtagEvent= data['idchat']
             document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
 
@@ -89,7 +90,10 @@
     </script>
 </head>
 <body>
-<h1>Chat Room</h1>
+<h1>Anonymous Chat Room</h1>
+<div>
+    <a href="/">homepage</a></br>
+</div>
 <div >
 
     <label >Enter an anonymous username:</label>
