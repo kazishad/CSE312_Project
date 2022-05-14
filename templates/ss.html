@@ -39,6 +39,7 @@
         socket.on('appendMessage', function(data){
             // console.log(data);
             // console.log(data["idchat"]);
+            alert("You got Messge >( ")
             idtagEvent= data['idchat']
             document.getElementById("addchat").innerHTML+= "<p onclick='upvote("+idtagEvent+")' id="+data['idchat']+">"+data['username']+":"+data["message"] + "<br></p>"
 
