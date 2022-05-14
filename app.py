@@ -1,5 +1,5 @@
 
-from flask import Flask, make_response, request, redirect, url_for
+from flask import Flask, make_response, request, redirect
 import os
 from save_picture import *
 from authentication import *
@@ -110,9 +110,7 @@ def login():
             form = request.form 
             auth_token_resp = auth_token(form["usernameField"], form["passwordField"])
             if auth_token_resp[0]:
-                s = url_for("profile", profile=form["usernameField"])
-
-                response = make_response(redirect(s))
+                response = make_response(redirect('/'+form["usernameField"]))
                 response.set_cookie('auth', auth_token_resp[1])
                 return response
                 
@@ -126,7 +124,7 @@ def login():
         xsrf_token = generate_xsrf_token()
         return custom_render_template("templates/Login.html", "xsrf_token", xsrf_token) # HTML templating - adds xsrf token to form
 
-    return redirect(url_for("root"))
+    return redirect("/root")
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -150,7 +148,7 @@ def register():
             print(form, flush=True)
             print("DICT", form.to_dict, type( form.to_dict),flush=True)
             if create(form["usernameField"], form["passwordField"]):
-                return redirect(url_for("login"))
+                return redirect("/login")
             else:
                 return "Username exists, choose another one, bitch"
 
@@ -193,7 +191,7 @@ def upload(profile):
             print("this is the filename", filename,flush=True)
             s = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(s)
-            return redirect(url_for("profile", profile=profile)) 
+            return redirect('/'+profile) 
         else:
             return "Invalid XSRF Token :("
 
